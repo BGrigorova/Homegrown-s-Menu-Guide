@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body style="background-color:lightgreen; text-align:center; font-family:Arial;">
+
+<h1>{{ item | upper }}</h1>
+<p>select one of the categories below to see more information about your menu item</p>
+
+<!-- Category Buttons -->
+<form action="#" method="get">
+  <button type="button">Calories</button>
+  <button type="button">Nutrition Macros</button><br><br>
+  <button type="button">Allergens</button>
+  <button type="button">Modifications</button>
+</form>
+
+<br>
+
+<!-- Back to Home Button -->
+<form action="{{ url_for('home') }}">
+  <button type="submit">Back to Home</button>
+</form>
+
+<p><b>Warning:</b> Going back will start over your menu item search.</p>
+
+</body>
+</html>
