@@ -1,8 +1,6 @@
-# import framework for handling the webpage architecture
 from flask import Flask, render_template, request, redirect, url_for
-# import module for handling csv data
+import requests
 import csv
-# create a blank app
 app = Flask(__name__)
 
 
@@ -10,12 +8,9 @@ def load_menu():
     """ Load data from a csv file and build a lowercase dictionary"""
     menu = {}
     with open('menu_items.csv', newline='') as csvfile:
-        # convert the csv to dictionary
         reader = csv.DictReader(csvfile)
         for row in reader:
-            # make all rows lowercase
             menu[row['Item'].lower()] = row
-        # return dictionary
         return menu
 
 
@@ -46,6 +41,39 @@ def categories(item):
 @app.route("/error")
 def error():
     return render_template("error.html")
+
+
+# nutrition macros page setup
+@app.route('/nutrition_macros/<item>')
+def nutrition_macros(item):
+    # Call the microservice running on port 5001
+    response = requests.get(f'http://127.0.0.1:5001/nutrition?menu_item_name={item}')
+    data = response.json()
+    return render_template('nutrition_macros.html', item=item, macros=data)
+
+
+# allergens page setup
+@app.route('/allergens/<item>')
+def allergens(item):
+    response = requests.get(f'http://127.0.0.1:5002/allergens?menu_item_name={item}')
+    data = response.json()
+    return render_template('allergens.html', item=item, allergens=data.get('allergens', []))
+
+
+# calories page setup
+@app.route('/calories/<item>')
+def calories(item):
+    response = requests.get(f'http://127.0.0.1:5003/calories?menu_item_name={item}')
+    data = response.json()
+    return render_template('calories.html', item=item, calories=data.get('calories', []))
+
+
+# modifications page setup
+@app.route('/modifications/<item>')
+def modifications(item):
+    response = requests.get(f'http://127.0.0.1:5004/modifications?menu_item_name={item}')
+    data = response.json()
+    return render_template('modifications.html', item=item, modifications=data.get('modifications', []))
 
 
 if __name__ == "__main__":
